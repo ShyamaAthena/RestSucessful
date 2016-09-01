@@ -60,18 +60,48 @@ public class DemoREST extends HttpServlet {
 					System.out.println("Query response: "
 							+ response.toString(2));
 					
-					writer.write(response.getInt("totalSize")
-							+ " record(s) returned\n\n");
+					writer.println("<html>");
+					writer.println("<body>");
+					writer.println("<t1>" + "<h1>"+(response.getInt("totalSize"))+ " record(s) returned"+"</h1>"+ "</t1>");
+					writer.println("</body>");
+					writer.println("</html>");
+					//writer.write(response.getInt("totalSize")
+							//+ " record(s) returned\n\n");
 					
 					JSONArray results = response.getJSONArray("records");
-					 
+					
+					writer.println("<html>");
+					writer.println("<body>");
+					writer.println("<table >");
+					writer.println("<tr>");
+					writer.println("<td><b>"+ "Name"+  "</td>");
+					writer.println("<td><b>"+ "&nbsp;&nbsp;&nbsp;&nbsp;"+  "</td>");
+					writer.println("<td><b>" +"Id"+  "</td>");
+					writer.println("</tr>");
+					
 					for (int i = 0; i < results.length(); i++) {
-						writer.write("\n"+results.getJSONObject(i).getString("Id")
-								+ ", "
-								+ results.getJSONObject(i).getString("Name")
-								+ "\n");
+						
+						
+						writer.println("<tr>");
+						
+						writer.println("<td>" +results.getJSONObject(i).getString("Name")+  "</td>");
+						writer.println("<td>"+ "&nbsp;&nbsp;&nbsp;&nbsp;"+  "</td>");
+						writer.println("<td>" +results.getJSONObject(i).getString("Id")+  "</td>");
+						
+						writer.println("</tr>");
+						
+						
+						//writer.write("\n"+results.getJSONObject(i).getString("Id")
+							//	+ ", "
+							//	+ results.getJSONObject(i).getString("Name")
+							//	+ "\n");
 					}
-					writer.write("\n");
+					writer.println("</table >");
+					
+					writer.println("</body>");
+					writer.println("</html>");
+					
+					
 				} catch (JSONException e) {
 					e.printStackTrace();
 					throw new ServletException(e);
@@ -80,6 +110,7 @@ public class DemoREST extends HttpServlet {
 		} finally {
 			get.releaseConnection();
 		}
+		
 	}
 
 	private String createAccount(String name, String instanceUrl,
@@ -107,9 +138,13 @@ public class DemoREST extends HttpServlet {
 
 		try {
 			httpclient.executeMethod(post);
-
-			writer.write("\n"+"HTTP status " + post.getStatusCode()
-					+ " creating account\n\n");
+			writer.println("<html>");
+			writer.println("<body>");
+			
+			writer.println("<br><t1>" +"HTTP status " + post.getStatusCode()	+ ", creating account... "+"</t1><br><br>");
+			
+			//writer.write("\n"+"HTTP status " + post.getStatusCode()
+				//	+ " creating account\n\n");
 
 			if (post.getStatusCode() == HttpStatus.SC_CREATED) {
 				try {
@@ -122,13 +157,16 @@ public class DemoREST extends HttpServlet {
 					if (response.getBoolean("success")) {
 						
 						accountId = response.getString("id");
-						writer.write("\n"+"New record id " + accountId + "\n\n");
+						writer.println("<t1>" +"New record id " + accountId +"</t1><br><br>");
+						//writer.write("\n"+"New record id " + accountId + "\n\n");
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 					//throw new ServletException(e);
 				}
 			}
+			writer.println("</body>");
+			writer.println("</html>");
 		} finally {
 			post.releaseConnection();
 		}
@@ -157,8 +195,12 @@ public class DemoREST extends HttpServlet {
 							+ response.toString(2)
 							)
 							;
-
-					writer.write("\n"+"Account content\n\n");
+					writer.println("<html>");
+					writer.println("<body>");
+					writer.println("<t1><br><u>" +"Account content"+"</u></t1><br>");
+					writer.println("<table >");
+					
+					//writer.write("\n"+"Account content\n\n");
 					response.remove("attributes");
 					Iterator iterator = response.keys();
 					while (iterator.hasNext()) {
@@ -179,11 +221,17 @@ public class DemoREST extends HttpServlet {
 						} else {
 							value = null;
 						}
-						writer.write("\n"+key + ":" + (value!= null? value: "")
-								+ "\n");
+						writer.println("<tr>");
+						writer.println("<td>" +key + ":" +  "</td>");
+						writer.println("<td>"+ "&nbsp;&nbsp;&nbsp;&nbsp;"+  "</td>");
+						writer.println("<td>" + (value!= null? value: "")+  "</td>");
+						//writer.write("\n"+key + ":" + (value!= null? value: "")
+								//+ "\n");
+						writer.println("</tr>");
 					}
-
-					writer.write("\n");
+					writer.println("</table >");
+					writer.println("</body>");
+					writer.println("</html>");
 				} catch (JSONException e) {
 					e.printStackTrace();
 					throw new ServletException(e);
@@ -223,8 +271,16 @@ public class DemoREST extends HttpServlet {
 
 		try {
 			httpclient.executeMethod(patch);
-			writer.write("\n"+"HTTP status " + patch.getStatusCode()
-					+ " updating account " + accountId + "\n\n");
+			writer.println("<html>");
+			writer.println("<body>");
+			
+			writer.println("<br><t1>" +"HTTP status " + patch.getStatusCode()	+ " updating account " + accountId+"</t1><br><br>");
+			
+			writer.println("/<html>");
+			writer.println("/<body>");
+			
+			//writer.write("\n"+"HTTP status " + patch.getStatusCode()
+			//		+ " updating account " + accountId + "\n\n");
 		} finally {
 			patch.releaseConnection();
 		}
@@ -241,8 +297,15 @@ public class DemoREST extends HttpServlet {
 
 		try {
 			httpclient.executeMethod(delete);
-			writer.write("\n"+"HTTP status " + delete.getStatusCode()
-					+ " deleting account " + accountId + "\n\n");
+			writer.println("<html>");
+			writer.println("<body>");
+			
+			writer.println("<br><t1>" +"HTTP status " + delete.getStatusCode()	+ " deleting account " + accountId+"</t1><br><br>");
+			
+			writer.println("/<html>");
+			writer.println("/<body>");
+			//writer.write("\n"+"HTTP status " + delete.getStatusCode()
+			//		+ " deleting account " + accountId + "\n\n");
 		} finally {
 			delete.releaseConnection();
 		}
@@ -262,38 +325,97 @@ public class DemoREST extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		PrintWriter writer = response.getWriter();
+		String accessToken = request.getParameter("access");
+		String instanceUrl = request.getParameter("url");
+		String choice = request.getParameter("choice");
+		String txName = request.getParameter("txName");
+		String txCity = request.getParameter("txCity");
+		String txAccount = request.getParameter("txAccount");
+		//String accessToken = (String) request.getSession().getAttribute(
+		//		ACCESS_TOKEN);
 
-		String accessToken = (String) request.getSession().getAttribute(
-				ACCESS_TOKEN);
-
-		String instanceUrl = (String) request.getSession().getAttribute(
-				INSTANCE_URL);
-
+		//String instanceUrl = (String) request.getSession().getAttribute(
+		//		INSTANCE_URL);
+		System.out.println(txName);
 		if (accessToken == null) {
-			writer.write("Error - no access token");
+			writer.println("<html>");
+			writer.println("<body>");
+			writer.println("<t1>" + "<h2>Error - no access token</h2>"+ "</t1>");
+			writer.println("</body>");
+			writer.println("</html>");
+			// writer.write("Error - no access token");
 			return;
 		}
+		writer.println("<html>");
+		writer.println("<body>");
 
-		writer.write("We have an access token: " + accessToken + "\n"
-				+ "Using instance " + instanceUrl + "\n\n");
+		writer.println("<table >");
+		writer.println("<tr>");
+		writer.println(" <td><b>We have an access token:</b> </td>");
+		writer.println("</tr>");
+		writer.println("<tr>");
+		writer.println("<td >" + accessToken + "</td>");
 
+		writer.println("</tr>");
+
+		writer.println(" <tr>");
+
+		writer.println(" <td><b1>Using instance </b></td>");
+		writer.println("</tr>");
+		writer.println("<tr>");
+		writer.println("<td>" + instanceUrl + "</td>");
+		writer.println("</tr>");
+
+		writer.println("</table>");
+		writer.println("</body>");
+		writer.println("</html>");
+		
+		//writer.write("We have an access token: " + accessToken + "\n"
+			//	+ "Using instance " + instanceUrl + "\n\n");
+		
+		if(choice.equalsIgnoreCase("show") )
+		{
+			System.out.println(choice);
 		showAccounts(instanceUrl, accessToken, writer);
 		
-		String accountId = createAccount("My New Org", instanceUrl,
-				accessToken, writer);
+		}
 		
-		showAccount(accountId, instanceUrl, accessToken, writer);
 		
-		showAccounts(instanceUrl, accessToken, writer);
+		else if(choice.equalsIgnoreCase("create"))
 		
-		updateAccount(accountId, "My New Org, Inc", "San Francisco",
-				instanceUrl, accessToken, writer);
+		{
+		String accountId = createAccount(txName, instanceUrl,
+						accessToken, writer);
+				
+				showAccount(accountId, instanceUrl, accessToken, writer);
+		}
+		else if(choice.equalsIgnoreCase("update"))
+			
+		{
+			updateAccount(txAccount, txName, txCity,
+					instanceUrl, accessToken, writer);
+			
+				
+			showAccount(txAccount, instanceUrl, accessToken, writer);
+		}
+		else if(choice.equalsIgnoreCase("delete"))
+			
+		{
+			deleteAccount(txAccount, instanceUrl, accessToken, writer);
+				
+			showAccounts( instanceUrl, accessToken, writer);
+		}
 		
-		showAccount(accountId, instanceUrl, accessToken, writer);
+		//showAccounts(instanceUrl, accessToken, writer);
 		
-		deleteAccount(accountId, instanceUrl, accessToken, writer);
+		//updateAccount(accountId, "My New Org, Inc", "San Francisco",
+		//		instanceUrl, accessToken, writer);
 		
-		showAccounts(instanceUrl, accessToken, writer);
+		//showAccount(accountId, instanceUrl, accessToken, writer);
+		
+		//deleteAccount(accountId, instanceUrl, accessToken, writer);
+		
+		//showAccounts(instanceUrl, accessToken, writer);
 	}
 
 	/**

@@ -25,25 +25,25 @@ import org.json.JSONTokener;
  */
 @WebServlet(name = "oauth", urlPatterns = { "/oauth/*", "/oauth" }, initParams = {
 		// clientId is 'Consumer Key' in the Remote Access UI
-		@WebInitParam(name = "clientId", value = "3MVG9Km_cBLhsuPzTtcGHsZpj9JylyezngYKNi.dNkSQmA0fAdwMD9OzkQEPFDJv1UgVF5tcERKtuiP5Yiin3"),
+		//@WebInitParam(name = "clientId", value = "3MVG9Km_cBLhsuPzTtcGHsZpj9JylyezngYKNi.dNkSQmA0fAdwMD9OzkQEPFDJv1UgVF5tcERKtuiP5Yiin3"),
 		// clientSecret is 'Consumer Secret' in the Remote Access UI
-		@WebInitParam(name = "clientSecret", value = "6135262856068035680"),
+		//@WebInitParam(name = "clientSecret", value = "6135262856068035680"),
 		// This must be identical to 'Callback URL' in the Remote Access UI
-		@WebInitParam(name = "redirectUri", value = "https://localhost:8443/RestTest/oauth/_callback"),
+		//@WebInitParam(name = "redirectUri", value = "https://localhost:8443/RestTest/oauth/_callback"),
 		@WebInitParam(name = "environment", value = "https://login.salesforce.com"), })
 public class OAuthServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private static final String ACCESS_TOKEN = "ACCESS_TOKEN";
 	private static final String INSTANCE_URL = "INSTANCE_URL";
-
+	private static final String _URL = "_URL";
 	private String clientId = null;
 	private String clientSecret = null;
 	private String redirectUri = null;
 	private String environment = null;
 	private String authUrl = null;
 	private String tokenUrl = null;
-       
+	String instanceUrl = null;   
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -56,9 +56,9 @@ public class OAuthServlet extends HttpServlet {
 	 * @see Servlet#init(ServletConfig)
 	 */
 	public void init(ServletConfig config) throws ServletException {
-		clientId = "3MVG9ZL0ppGP5UrBfg7lLR.1nXNcROMhIdtxzO.GTEUY0BGoGd7GJG9.YuyPE0108Yo4SczSvhBU2rZS2qQKK";//this.getInitParameter("clientId");
-		clientSecret = "6033415569302807275";//this.getInitParameter("clientSecret");
-		redirectUri = "https://localhost:8443//RestTest/oauth/_callback";//this.getInitParameter("redirectUri");
+		clientId = "3MVG9ZL0ppGP5UrBfg7lLR.1nXBH0.3HKph0lL1REL10qOhu1eOxrNgvSaPGPt2ANaTqtr33PD95_S1kuOh8s";//this.getInitParameter("clientId");
+		clientSecret = "3255284275787900504";//this.getInitParameter("clientSecret");
+		redirectUri = "https://powerful-plains-50930.herokuapp.com//oauth/_callback";//this.getInitParameter("redirectUri");
 		environment = "https://login.salesforce.com";//this.getInitParameter("environment");
 
 		try {
@@ -77,6 +77,7 @@ public class OAuthServlet extends HttpServlet {
 	}
 
 	/**
+	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -84,21 +85,22 @@ public class OAuthServlet extends HttpServlet {
 		String accessToken = (String) request.getSession().getAttribute(
 				ACCESS_TOKEN);
 		System.out.println(accessToken);
+		System.out.println("Im in");
 		if (accessToken == null) {
-			String instanceUrl = null;
+			
 			if (request.getRequestURI().endsWith("oauth")) {
 				System.out.println("inside oauth");
 				// we need to send the user to authorize
 				response.sendRedirect(authUrl);
+				System.out.println("out oauth");
 				return;
 			}
 			else {
 				System.out.println("Auth successful - got callback");
 
 				String code = request.getParameter("code");
-				System.out.println("code");
-				System.out.println("Auth successful - got callback");
 				System.out.println(code);
+				
 				HttpClient httpclient = new HttpClient();
 				
 				PostMethod post = new PostMethod(tokenUrl);
@@ -139,8 +141,13 @@ public class OAuthServlet extends HttpServlet {
 			// We also get the instance URL from the OAuth response, so set it
 			// in the session too
 			request.getSession().setAttribute(INSTANCE_URL, instanceUrl);
+			
 		}
-		response.sendRedirect(request.getContextPath() + "/DemoREST");
+		System.out.println(instanceUrl);
+		request.getSession().setAttribute(_URL, request.getContextPath() + "/DemoREST");
+		
+		response.sendRedirect("https://powerful-plains-50930.herokuapp.com/Accessed.jsp?accesstocken="+accessToken+"&instaUrl="+instanceUrl);
+		//response.sendRedirect(request.getContextPath() + "/DemoREST");
 	}
 
 	/**
